@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from .models import (Account,
                      Student,
-                     Group
+                     Group,
+                     Professor
                     )
 
 from typing import Optional
@@ -36,7 +37,9 @@ class StudentAdmin(admin.ModelAdmin):
         if(self.student_edit_age_validator(obj)):
             return self.readonly_fields + ('age',)
         return self.readonly_fields
-        
+
+class ProfessorAdmin(admin.ModelAdmin):
+    pass
 
 admin.site.register(
     Account,AccountAdmin
@@ -48,3 +51,4 @@ admin.site.register(
 admin.site.register(
     Group
 )
+admin.site.register(Professor,ProfessorAdmin)
