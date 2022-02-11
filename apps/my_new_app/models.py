@@ -5,7 +5,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-class Account(models.Model):
+from abstracts.models import DateTimeCustom
+
+
+class Account(DateTimeCustom):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
@@ -14,7 +17,7 @@ class Account(models.Model):
         max_length=150
     )
     description=models.TextField()
-    
+
     class Meta:
         ordering = (
             'full_name',
@@ -25,7 +28,7 @@ class Account(models.Model):
     def __str__(self) -> str:
         return f'Аккаунт: {self.user_id} / {self.full_name}'
 
-class Group(models.Model):
+class Group(DateTimeCustom):
     GROUP_NAME_MAX_LENGTH = 10
     name = models.CharField(
         max_length=GROUP_NAME_MAX_LENGTH
@@ -41,7 +44,7 @@ class Group(models.Model):
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
 
-class Student(models.Model):
+class Student(DateTimeCustom):
     MAX_REGISTER_AGE = 30
     account = models.OneToOneField(
         Account,
@@ -80,7 +83,7 @@ Group: {self.group}, GPA: {self.gpa}'
         verbose_name_plural = 'Студенты'
     
 
-class Professor(models.Model):
+class Professor(DateTimeCustom):
     FULL_NAME_MAX_LENGTH = 40
     TOPIC_MAX_LENGTH = 30
     

@@ -38,6 +38,9 @@ class StudentAdmin(admin.ModelAdmin):
             return self.readonly_fields + ('age',)
         return self.readonly_fields
 
+class GroupAdmin(admin.ModelAdmin):
+    pass
+
 class ProfessorAdmin(admin.ModelAdmin):
     pass
 
@@ -49,6 +52,6 @@ admin.site.register(
 )
 
 admin.site.register(
-    Group
+    Group,GroupAdmin
 )
 admin.site.register(Professor,ProfessorAdmin)
