@@ -1,6 +1,7 @@
-from pyexpat import model
-from statistics import mode
+from datetime import datetime
+
 from django.db import models
+from django.db.models import QuerySet
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -44,6 +45,12 @@ class Group(DateTimeCustom):
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
 
+class StudentQuerySet(QuerySet):
+    ADULT_AGE = 18
+    
+    def get_adult_students(self) -> QuerySet:
+        return super().filter(age__gte=self.ADULT_AGE)
+
 class Student(DateTimeCustom):
     MAX_REGISTER_AGE = 30
     account = models.OneToOneField(
@@ -60,6 +67,7 @@ class Student(DateTimeCustom):
     gpa = models.FloatField(
         'Среднее значение GPA'
     )
+    objects = StudentQuerySet().as_manager()
     
     def __str__(self) -> str:
         return f'Student: {self.account}, Age: {self.age},\
@@ -73,7 +81,14 @@ Group: {self.group}, GPA: {self.gpa}'
                 params={'max_age':self.MAX_REGISTER_AGE}
                                   )
         super().save(*args,**kwargs)
-            
+    
+    def delete(self) -> None:
+        datetime_now: datetime = datetime.now()
+        self.datetime_deleted = datetime_now
+        
+        self.save(
+            update_fields=['datetime_deleted']
+        )
     
     class Meta:
         ordering = (

@@ -24,7 +24,8 @@ class AccountAdmin(admin.ModelAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     
-    MAX_STUDENT_EDITABLE_AGE = 16
+    MAX_STUDENT_EDITABLE_AGE: int = 16
+    readonly_fields: tuple = ('datetime_created','datetime_updated','datetime_deleted')
     
     def student_edit_age_validator(self,
                                    obj: Optional[Student]) -> bool:
