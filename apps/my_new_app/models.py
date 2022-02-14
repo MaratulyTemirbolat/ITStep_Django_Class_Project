@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import QuerySet
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -49,7 +48,7 @@ class StudentQuerySet(QuerySet):
     ADULT_AGE = 18
     
     def get_adult_students(self) -> QuerySet:
-        return super().filter(age__gte=self.ADULT_AGE)
+        return self.filter(age__gte=self.ADULT_AGE)
 
 class Student(DateTimeCustom):
     MAX_REGISTER_AGE = 30
@@ -78,7 +77,7 @@ Group: {self.group}, GPA: {self.gpa}'
             raise ValidationError('Ваш возраст должен \
 быть не более %(max_age)s лет',
                 code = 'max_possible_age',
-                params={'max_age':self.MAX_REGISTER_AGE}
+                params={'max_age': self.MAX_REGISTER_AGE}
                                   )
         super().save(*args,**kwargs)
     
