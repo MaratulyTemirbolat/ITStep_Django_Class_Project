@@ -7,6 +7,10 @@ from django.core.exceptions import ValidationError
 
 from abstracts.models import DateTimeCustom
 
+class AccountQuerySet(QuerySet):
+    def get_superuser_accounts(self) -> QuerySet:
+        return self.filter(user__is_superuser=True)
+
 
 class Account(DateTimeCustom):
     user = models.OneToOneField(
@@ -17,6 +21,7 @@ class Account(DateTimeCustom):
         max_length=150
     )
     description=models.TextField()
+    objects = AccountQuerySet().as_manager()
 
     class Meta:
         ordering = (
@@ -27,6 +32,12 @@ class Account(DateTimeCustom):
     
     def __str__(self) -> str:
         return f'Аккаунт: {self.user_id} / {self.full_name}'
+
+
+class GroupQuerySet(QuerySet):
+    def get_groups_with_high_gpa(self) -> QuerySet:
+        HIGH_GPA_LEVEL = 4.0
+
 
 class Group(DateTimeCustom):
     GROUP_NAME_MAX_LENGTH = 10
@@ -44,11 +55,13 @@ class Group(DateTimeCustom):
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
 
+
 class StudentQuerySet(QuerySet):
     ADULT_AGE = 18
     
     def get_adult_students(self) -> QuerySet:
         return self.filter(age__gte=self.ADULT_AGE)
+
 
 class Student(DateTimeCustom):
     MAX_REGISTER_AGE = 30
@@ -74,8 +87,8 @@ Group: {self.group}, GPA: {self.gpa}'
     
     def save(self,*args,**kwargs) -> None:
         if(self.age > self.MAX_REGISTER_AGE):
-            raise ValidationError('Ваш возраст должен \
-быть не более %(max_age)s лет',
+            raise ValidationError(
+                'Ваш возраст должен быть не более %(max_age)s лет',
                 code = 'max_possible_age',
                 params={'max_age': self.MAX_REGISTER_AGE}
                                   )
@@ -147,6 +160,3 @@ class Professor(DateTimeCustom):
         
     def __str__(self) -> str:
         return f'Teacher: {self.full_name}, teaches: {self.topic}'
-
-    
-        

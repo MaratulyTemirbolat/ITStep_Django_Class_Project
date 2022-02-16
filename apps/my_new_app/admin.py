@@ -30,6 +30,18 @@ class StudentAdmin(admin.ModelAdmin):
         'datetime_updated',
         'datetime_deleted'
         )
+    list_filter = (
+        'age',
+        'gpa'
+    )
+    search_fields = (
+        'account__full_name',
+    )
+    list_display = (
+        'age',
+        'gpa',
+        
+    )
     
     def student_edit_age_validator(self,
                                    obj: Optional[Student]) -> bool:
