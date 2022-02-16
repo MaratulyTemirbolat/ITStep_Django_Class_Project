@@ -59,7 +59,11 @@ class GroupAdmin(admin.ModelAdmin):
     pass
 
 class ProfessorAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields: tuple = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted'
+        )
 
 admin.site.register(
     Account,AccountAdmin
