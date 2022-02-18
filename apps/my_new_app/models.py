@@ -37,7 +37,7 @@ class Account(DateTimeCustom):
 class GroupQuerySet(QuerySet):
     def get_groups_with_high_gpa(self) -> QuerySet:
         HIGH_GPA_LEVEL = 4.0
-
+        
 
 class Group(DateTimeCustom):
     GROUP_NAME_MAX_LENGTH = 10

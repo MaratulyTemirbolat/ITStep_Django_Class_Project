@@ -1,0 +1,5 @@
+#for requirements:
+    pip list
+    pip show module_name
+    pip freeze > all.txt (if you are in requirements)
+    pip install base.txt (if you are in requirements)

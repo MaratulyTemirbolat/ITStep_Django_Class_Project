@@ -1,0 +1,19 @@
+{% extends 'my_new_app/base.html' %}
+
+{% block title %} {{ ctx_title }} {% endblock %}
+
+{% block content %}
+    <h1>Главная страница</h1>
+    {% include 'my_new_app/additional.html' %}
+
+    {% for user in ctx_users %}
+        <div >
+            <p>{{ user.username }}</p>
+            <p> {{ user.first_name }} </p>
+            <p> {{ user.last_name }} </p>
+            <p> {{ user.password }} </p>
+            <hr>
+        </div>
+    {% endfor %}
+
+{% endblock %}

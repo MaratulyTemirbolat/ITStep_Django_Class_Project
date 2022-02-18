@@ -1,14 +1,14 @@
+from typing import Optional
+
 from django.contrib import admin
+from django.http import HttpRequest
 
 from .models import (Account,
                      Student,
                      Group,
-                     Professor
+                     Professor,
                     )
 
-from typing import Optional
-
-from django.http import HttpRequest
 
 class AccountAdmin(admin.ModelAdmin):
     # readonly_fields = (
@@ -28,11 +28,11 @@ class StudentAdmin(admin.ModelAdmin):
     readonly_fields: tuple = (
         'datetime_created',
         'datetime_updated',
-        'datetime_deleted'
+        'datetime_deleted',
         )
     list_filter = (
         'age',
-        'gpa'
+        'gpa',
     )
     search_fields = (
         'account__full_name',
@@ -40,7 +40,6 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = (
         'age',
         'gpa',
-        
     )
     
     def student_edit_age_validator(self,
@@ -62,7 +61,7 @@ class ProfessorAdmin(admin.ModelAdmin):
     readonly_fields: tuple = (
         'datetime_created',
         'datetime_updated',
-        'datetime_deleted'
+        'datetime_deleted',
         )
 
 admin.site.register(
