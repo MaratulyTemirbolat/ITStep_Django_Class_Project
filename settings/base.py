@@ -42,6 +42,9 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'debug_toolbar',
+    'django_extensions',
 ]
 
 PROJECT_APPS = [
@@ -59,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'urls.urls'
@@ -79,7 +83,32 @@ TEMPLATES = [
     },
 ]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 WSGI_APPLICATION = 'settings.wsgi.application'
+
+# DJANGO_DEBUG_TOOLBAR
+#--------------------------------
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+]
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+#-------------------------------
 
 
 # Database
@@ -130,8 +159,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Configuration with shell_plus
+
+SHELL_PLUS_PRE_IMPORTS = [
+    ('django.db', ('connection', 'reset_queries', 'connections')),
+    ('datetime', ('datetime', 'timedelta', 'date')),
+    ('json', ('loads', 'dumps')),
+]
+SHELL_PLUS_MODEL_ALIASES = {
+    'university': {
+        'Student': 'S',
+        'Account': 'A',
+        'Group': 'G',
+        'Professor': 'P',
+    },
+}
+SHELL_PLUS = 'ipython'
+SHELL_PLUS_PRINT_SQL = True
+SHELL_PLUS_PRINT_SQL_TRUNCATE = 1000

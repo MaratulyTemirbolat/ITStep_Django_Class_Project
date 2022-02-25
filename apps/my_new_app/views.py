@@ -2,14 +2,21 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
+from django.core.handlers.wsgi import WSGIRequest
 
-from .models import Student
 
-def index(request) -> HttpResponse:
+def index(request: WSGIRequest) -> HttpResponse:
     users: QuerySet = User.objects.all()
     context: dict = {
-        'ctx_title': 'Главная страница',
-        'ctx_users': users
+        'users': users
     }
     
     return render(request,'my_new_app/index.html',context)
+
+def show(request: WSGIRequest, username: str) -> HttpResponse:
+    user: User = User.objects.get(username=username)
+    context: dict = {
+        "ctx_title": 'Профиль пользователя',
+        "ctx_user": user,
+    }
+    return render(request,"my_new_app/index_2.html",context=context)

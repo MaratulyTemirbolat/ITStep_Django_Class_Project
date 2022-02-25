@@ -5,13 +5,15 @@ from django.http import HttpRequest
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import (Account,
-                     Student,
-                     Group,
-                     Professor,
-                    )
+from .models import (
+    Account,
+    Student,
+    Group,
+    Professor,
+)
 
-class UserAdmin(UserAdmin):
+class CustomUserAdmin(UserAdmin):
+    readonly_fields: tuple = ()
     def get_readonly_fields(self, request: HttpRequest,
                             obj: Optional[User] = None) -> tuple:
         if obj:
@@ -82,6 +84,9 @@ class ProfessorAdmin(admin.ModelAdmin):
         )
 
 
+admin.site.unregister(User)
+
+admin.site.register(User,CustomUserAdmin)
 
 admin.site.register(Account,AccountAdmin)
 

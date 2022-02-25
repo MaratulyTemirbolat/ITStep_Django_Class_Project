@@ -1,10 +1,8 @@
 import random
-from datetime import datetime
-from unicodedata import name
 import names
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     User,
@@ -35,15 +33,16 @@ class Command(BaseCommand):
                         inc: int) -> str:
         return f'{name} {inc}'
 
-    def _generate_users(self,user_number: int,initial_time) -> None:
+    def _generate_users(self, user_number: int, initial_time: datetime) -> None:
         """Generate user objects"""
         
         REQUIRED_SUPERUSER_QUANTITY = 1
+        
         _email_patterns: tuple = (
             'gmail.com','outlook.com','yahoo.com',
             'inbox.ru','inbox.ua','inbox.kz',
             'yandex.ru','yandex.ua','yandex.kz',
-            'mail.ru','mail.ua','mail.kz'
+            'mail.ru','mail.ua','mail.kz',
         )
         
         def get_username(first_name: str, last_name: str) -> str:
@@ -58,14 +57,9 @@ class Command(BaseCommand):
         
         def get_password() -> str:
             _passwd_pattern: str = 'abcde12345'
-            _passwd_max_length: int = 8
-            _password_min_length: int = 1
-            _user_password_length: int = random.randint(
-                _password_min_length,
-                _passwd_max_length
-                )
+            _passwd_length: int = 8 
             _user_password: str = ''.join(
-                random.sample(_passwd_pattern,_user_password_length)
+                random.sample(_passwd_pattern,_passwd_length)
                 )
             return make_password(_user_password)
         
@@ -77,12 +71,12 @@ class Command(BaseCommand):
             password: str = get_password()
             
             cur_user: dict = {
-            'first_name': first_name,
-            'last_name': last_name,
-            'username': username,
-            'email': email,
-            'password': password,
-            'is_staff': True,
+                'first_name': first_name,
+                'last_name': last_name,
+                'username': username,
+                'email': email,
+                'password': password,
+                'is_staff': True,
             }
             
             return cur_user
@@ -91,7 +85,7 @@ class Command(BaseCommand):
             is_superuser=True
             ).count()
         
-        if(super_user_number < REQUIRED_SUPERUSER_QUANTITY):
+        if (super_user_number < REQUIRED_SUPERUSER_QUANTITY):
             super_user: dict = get_user_instance_dict()
             while(User.objects.filter(
                 username=super_user['username']
@@ -232,13 +226,12 @@ class Command(BaseCommand):
 
         current_user_number: int = User.objects.count()
         user_difference: int = TOTAL_USER_COUNT - current_user_number
-        if(user_difference > ZERO_COUNT):
-            self._generate_users(user_difference,start)
+        if (user_difference > ZERO_COUNT):
+            self._generate_users(user_difference, start)
         else:
             print(
-                'No nedd to create Users. Max amount is {}'.format(
+                'No need to create Users. Max amount is',
                 TOTAL_USER_COUNT
-                )
             )
         
         # self._generate_groups()  # Генерируем данные
