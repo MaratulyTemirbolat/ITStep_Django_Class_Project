@@ -6,15 +6,15 @@ from django.core.handlers.wsgi import WSGIRequest
 
 
 def index(request: WSGIRequest) -> HttpResponse:
-    users: QuerySet = User.objects.all()
+    users: QuerySet = User.objects.all().order_by('-is_superuser')
     context: dict = {
         'users': users
     }
     
     return render(request,'my_new_app/index.html',context)
 
-def show(request: WSGIRequest, username: str) -> HttpResponse:
-    user: User = User.objects.get(username=username)
+def show(request: WSGIRequest, user_id: int) -> HttpResponse:
+    user: User = User.objects.get(pk=user_id)
     context: dict = {
         "ctx_title": 'Профиль пользователя',
         "ctx_user": user,
