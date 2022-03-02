@@ -1,8 +1,9 @@
 import random
+import names
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     User,
 )
@@ -32,6 +33,91 @@ class Command(BaseCommand):
                         inc: int) -> str:
         return f'{name} {inc}'
 
+    def _generate_users(self, user_number: int, initial_time: datetime) -> None:
+        """Generate user objects"""
+        
+        REQUIRED_SUPERUSER_QUANTITY = 1
+        
+        _email_patterns: tuple = (
+            'gmail.com','outlook.com','yahoo.com',
+            'inbox.ru','inbox.ua','inbox.kz',
+            'yandex.ru','yandex.ua','yandex.kz',
+            'mail.ru','mail.ua','mail.kz',
+        )
+        
+        def get_username(first_name: str, last_name: str) -> str:
+            username: str = first_name.lower() + '_' + last_name.lower()
+            return username
+        
+        def get_email(first_name: str, last_name: str) -> str:
+            email_identification: str = random.choice(_email_patterns)
+            email: str = first_name.lower() + '.' + last_name.lower() + \
+                '@' +email_identification
+            return email
+        
+        def get_password() -> str:
+            _passwd_pattern: str = 'abcde12345'
+            _passwd_length: int = 8 
+            _user_password: str = ''.join(
+                random.sample(_passwd_pattern,_passwd_length)
+                )
+            return make_password(_user_password)
+        
+        def get_user_instance_dict() -> dict:
+            first_name: str = names.get_first_name()
+            last_name: str = names.get_last_name()
+            username: str = get_username(first_name,last_name)
+            email: str = get_email(first_name,last_name)
+            password: str = get_password()
+            
+            cur_user: dict = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'username': username,
+                'email': email,
+                'password': password,
+                'is_staff': True,
+            }
+            
+            return cur_user
+            
+        super_user_number: int = User.objects.filter(
+            is_superuser=True
+            ).count()
+        
+        if (super_user_number < REQUIRED_SUPERUSER_QUANTITY):
+            super_user: dict = get_user_instance_dict()
+            while(User.objects.filter(
+                username=super_user['username']
+            ).exists()):
+                super_user = get_user_instance_dict()
+                
+            super_user['is_superuser'] = True
+            User.objects.create(**super_user)
+            user_number -= 1
+            print(
+            'Generating Data for SuperUser: {} seconds'.format(
+                (datetime.now()-initial_time).total_seconds()
+                )
+            )
+        
+        cur_user: dict = get_user_instance_dict()
+        
+        cur_index: int
+        for cur_index in range(user_number):
+            while(User.objects.filter(
+                username=cur_user['username']
+                ).exists()):
+                cur_user = get_user_instance_dict()
+            
+            User.objects.create(**cur_user)
+            print(
+            'Generating Data for General User: {} seconds'.format(
+                (datetime.now()-initial_time).total_seconds()
+                )
+            )
+            
+    
     def _generate_users_accounts_students(self) -> None:
         """Generate user account and student objects"""
         
@@ -132,12 +218,25 @@ class Command(BaseCommand):
             
     def handle(self, *args: tuple, **kwargs: dict) -> None:  # Автоматически вызывается, когда вызывается generate_data файл
         """Handles data filling."""
+        
+        TOTAL_USER_COUNT = 500
+        ZERO_COUNT = 0 
 
         start: datetime = datetime.now()  # Получаем время в начале срабатывания кода, чтобы высчитать разницу
 
-        self._generate_groups() # Генерируем данные
-        self._generate_users_accounts_students()
-        self._generate_professors()
+        current_user_number: int = User.objects.count()
+        user_difference: int = TOTAL_USER_COUNT - current_user_number
+        if (user_difference > ZERO_COUNT):
+            self._generate_users(user_difference, start)
+        else:
+            print(
+                'No need to create Users. Max amount is',
+                TOTAL_USER_COUNT
+            )
+        
+        # self._generate_groups()  # Генерируем данные
+        # self._generate_users_accounts_students()
+        # self._generate_professors()
 
         # Выдаем время генерации данных
         print(
