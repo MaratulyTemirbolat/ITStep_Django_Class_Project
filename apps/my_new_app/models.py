@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from abstracts.models import DateTimeCustom
+from auths.models import CustomUser
+
 
 class AccountQuerySet(QuerySet):
     def get_superuser_accounts(self) -> QuerySet:
