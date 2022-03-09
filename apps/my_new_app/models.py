@@ -2,44 +2,44 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import QuerySet
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from abstracts.models import DateTimeCustom
 from auths.models import CustomUser
 
 
-class AccountQuerySet(QuerySet):
-    def get_superuser_accounts(self) -> QuerySet:
-        return self.filter(user__is_superuser=True)
+# class AccountQuerySet(QuerySet):
+#     def get_superuser_accounts(self) -> QuerySet:
+#         return self.filter(user__is_superuser=True)
 
 
-class Account(DateTimeCustom):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE
-    )
-    full_name = models.CharField(
-        max_length=150
-    )
-    description=models.TextField()
-    objects = AccountQuerySet().as_manager()
-
-    class Meta:
-        ordering = (
-            'full_name',
-        )
-        verbose_name = 'Аккаунт'
-        verbose_name_plural = 'Аккаунты'
-    
-    def __str__(self) -> str:
-        return f'Аккаунт: {self.user_id} / {self.full_name}'
+# class Account(DateTimeCustom):
+#    user = models.OneToOneField(
+#        CustomUser,
+#        on_delete=models.CASCADE
+#    )
+#    full_name = models.CharField(
+#        max_length=150
+#    )
+#    description = models.TextField()
+#    objects = AccountQuerySet().as_manager()
+#
+#    class Meta:
+#        ordering = (
+#            'full_name',
+#        )
+#        verbose_name = 'Аккаунт'
+#        verbose_name_plural = 'Аккаунты'
+#
+#    def __str__(self) -> str:
+#        return f'Аккаунт: {self.user_id} / {self.full_name}'
 
 
 class GroupQuerySet(QuerySet):
     def get_groups_with_high_gpa(self) -> QuerySet:
         HIGH_GPA_LEVEL = 4.0
-        
+
 
 class Group(DateTimeCustom):
     GROUP_NAME_MAX_LENGTH = 10
@@ -68,49 +68,55 @@ class StudentQuerySet(QuerySet):
 class Student(DateTimeCustom):
     MAX_REGISTER_AGE = 30
     account = models.OneToOneField(
-        Account,
-        on_delete=models.CASCADE
+        CustomUser,
+        on_delete=models.PROTECT,
+        verbose_name='Пользователь'
     )
     age = models.IntegerField(
-        'Возраст студента'
+        verbose_name='Возраст студента'
     )
     group = models.ForeignKey(
         Group,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        verbose_name='Группа'
     )
     gpa = models.FloatField(
-        'Среднее значение GPA'
+        verbose_name='Среднее значение GPA'
     )
     objects = StudentQuerySet().as_manager()
-    
-    def __str__(self) -> str:
-        return f'Student: {self.account}, Age: {self.age},\
-Group: {self.group}, GPA: {self.gpa}'
-    
-    def save(self,*args,**kwargs) -> None:
-        if(self.age > self.MAX_REGISTER_AGE):
-            raise ValidationError(
-                'Ваш возраст должен быть не более %(max_age)s лет',
-                code = 'max_possible_age',
-                params={'max_age': self.MAX_REGISTER_AGE}
-                                  )
-        super().save(*args,**kwargs)
-    
-    def delete(self) -> None:
-        datetime_now: datetime = datetime.now()
-        self.datetime_deleted = datetime_now
-        
-        self.save(
-            update_fields=['datetime_deleted']
-        )
-    
+
     class Meta:
         ordering = (
             'gpa',
         )
         verbose_name = 'Студент'
         verbose_name_plural = 'Студенты'
-    
+
+    def __str__(self) -> str:
+        return f'Student: {0}, Age: {1},Group: {2}, GPA: {3}'.format(
+            self.account,
+            self.age,
+            self.group,
+            self.gpa
+        )
+
+    def save(self, *args, **kwargs) -> None:
+        if(self.age > self.MAX_REGISTER_AGE):
+            raise ValidationError(
+                'Ваш возраст должен быть не более %(max_age)s лет',
+                code='max_possible_age',
+                params={'max_age': self.MAX_REGISTER_AGE}
+                                  )
+        super().save(*args, **kwargs)
+
+    def delete(self) -> None:
+        datetime_now: datetime = datetime.now()
+        self.datetime_deleted = datetime_now
+
+        self.save(
+            update_fields=['datetime_deleted']
+        )
+
 
 class Professor(DateTimeCustom):
     FULL_NAME_MAX_LENGTH = 40
