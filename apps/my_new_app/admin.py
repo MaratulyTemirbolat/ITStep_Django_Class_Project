@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.contrib import admin
 from django.http import HttpRequest
+from django.utils.safestring import mark_safe
 # from django.contrib.auth.admin import UserAdmin
 # from django.contrib.auth.models import User
 
@@ -9,6 +10,8 @@ from my_new_app.models import (
     Student,
     Group,
     Professor,
+    StudentHomework,
+    File,
 )
 
 
@@ -51,6 +54,7 @@ class StudentAdmin(admin.ModelAdmin):
         'gpa',
     )
     list_display = (
+        'full_name',
         'age',
         'gpa',
     )
@@ -81,6 +85,40 @@ class ProfessorAdmin(admin.ModelAdmin):
         )
 
 
+class StudentHomeworkAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
+    list_filter = ('datetime_deleted',)
+    list_display = ('title', 'subject', 'get_logo', 'student')
+
+    def get_logo(self, obj: StudentHomework):
+        if obj.logo:
+            return mark_safe(f'<img src="{obj.logo.url}" width="150">')
+        return "-"
+    get_logo.short_description = 'Логотип'
+
+    def get_readonly_fields(self, request: HttpRequest,
+                            obj: Optional[StudentHomework] = None) -> tuple:
+        if obj:
+            return self.readonly_fields + ('title', 'subject',
+                                           'logo', 'student'
+                                           )
+        return self.readonly_fields
+
+
+class FileAdmin(admin.ModelAdmin):
+    readonly_fields = ()
+
+    def get_readonly_fields(self, request: HttpRequest,
+                            obj: Optional[File] = None) -> tuple:
+        if obj:
+            return self.readonly_fields + ('title', 'file', 'homework')
+        return self.readonly_fields
+
+
 # admin.site.unregister(User)
 
 # admin.site.register(User, CustomUserAdmin)
@@ -90,3 +128,7 @@ admin.site.register(Student, StudentAdmin)
 admin.site.register(Group, GroupAdmin)
 
 admin.site.register(Professor, ProfessorAdmin)
+
+admin.site.register(StudentHomework, StudentHomeworkAdmin)
+
+admin.site.register(File, FileAdmin)
