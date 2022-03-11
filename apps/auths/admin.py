@@ -49,7 +49,6 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('email', 'is_active',)
     search_fields = ('email',)
     ordering = ('email',)
-    
 
     def get_readonly_fields(self, request: HttpRequest,
                             obj: Optional[CustomUser] = None) -> tuple:
