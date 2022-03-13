@@ -22,7 +22,7 @@
                     <div class="info">
                         <span id="user_name">{{user.pk}}</span><br> Email: {{user.email}} <br> Role: <span id="role">{% if user.is_superuser %}Admin{% else %}User{% endif %}</span>
                     </div>
-                    <a class="edit"   href="{% url 'page_show' user.pk %}" role="button" style="text-align:center;">Profile</a>
+                    <a class="edit"   href="{% url 'user_info' user.pk %}" role="button" style="text-align:center;">Profile</a>
                     <a class="delete" href="#" role="button" style="text-align:center;">Delete</a>
                     {% comment %} <button class="edit" onclick="location.href = 'show'">Show</button>
                     <button class="delete">Delete</button> {% endcomment %}
