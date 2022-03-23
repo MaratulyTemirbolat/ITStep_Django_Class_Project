@@ -1,4 +1,5 @@
 from datetime import datetime
+from tabnanny import verbose
 
 from django.db import models
 from django.db.models import QuerySet
@@ -9,57 +10,30 @@ from abstracts.models import DateTimeCustom
 from auths.models import CustomUser
 
 
-# class AccountQuerySet(QuerySet):
-#     def get_superuser_accounts(self) -> QuerySet:
-#         return self.filter(user__is_superuser=True)
-
-
-# class Account(DateTimeCustom):
-#    user = models.OneToOneField(
-#        CustomUser,
-#        on_delete=models.CASCADE
-#    )
-#    full_name = models.CharField(
-#        max_length=150
-#    )
-#    description = models.TextField()
-#    objects = AccountQuerySet().as_manager()
-#
-#    class Meta:
-#        ordering = (
-#            'full_name',
-#        )
-#        verbose_name = 'Аккаунт'
-#        verbose_name_plural = 'Аккаунты'
-#
-#    def __str__(self) -> str:
-#        return f'Аккаунт: {self.user_id} / {self.full_name}'
-
-
-class GroupQuerySet(QuerySet):
-    def get_groups_with_high_gpa(self) -> QuerySet:
-        HIGH_GPA_LEVEL = 4.0
-
-
 class Group(DateTimeCustom):
-    GROUP_NAME_MAX_LENGTH = 10
-    name = models.CharField(
-        max_length=GROUP_NAME_MAX_LENGTH
+    """Group model class."""
+
+    GROUP_NAME_MAX_LENGTH = 10  # max length of the group name
+    name = models.CharField(  # field (column in db) representing group name
+        max_length=GROUP_NAME_MAX_LENGTH  # max possible length of class name
     )
 
     def __str__(self) -> str:
+        """Magic method that returns name of the instance in print part."""
         return f'Группа: {self.name}'
 
-    class Meta:
-        ordering = (
-            'name',
+    class Meta:  # noqa
+        ordering = (  # tuple indicates by which fields it needs to sort
+            'name',  # sort by field "name" in asc
         )
-        verbose_name = 'Группа'
-        verbose_name_plural = 'Группы'
+        verbose_name = 'Группа'  # class name where it is put in single form
+        verbose_name_plural = 'Группы'  # class name where it is in plural form
 
 
 class StudentQuerySet(QuerySet):
-    ADULT_AGE = 18
+    """Exte."""
+
+    ADULT_AGE = 18  # the minimum age of any adult
 
     def get_adult_students(self) -> QuerySet:
         return self.filter(age__gte=self.ADULT_AGE)
@@ -123,7 +97,7 @@ class Student(DateTimeCustom):
         )
 
 
-class Professor(DateTimeCustom):
+class Professor(DateTimeCustom):  # noqa
     FULL_NAME_MAX_LENGTH = 40
     TOPIC_MAX_LENGTH = 30
 
@@ -154,7 +128,7 @@ class Professor(DateTimeCustom):
         verbose_name='Полное имя',
         max_length=FULL_NAME_MAX_LENGTH
     )
-    account = models.OneToOneField(
+    user = models.OneToOneField(
         CustomUser,
         on_delete=models.PROTECT
     )
@@ -178,13 +152,13 @@ class Professor(DateTimeCustom):
         return f'Teacher: {self.full_name}, teaches: {self.topic}'
 
 
-class StudentHomeworkQuerySet(QuerySet):
+class StudentHomeworkQuerySet(QuerySet):  # noqa
 
-    def get_non_deleted(self) -> QuerySet:
-        return self.exclude(datetime_deleted__isnull=False)
+    def get_non_deleted(self) -> QuerySet:  # noqa
+        return self.filter(datetime_deleted__isnull=True)
 
 
-class StudentHomework(DateTimeCustom):
+class StudentHomework(DateTimeCustom):  # noqa
     HOMEWORK_MAX_LENGTH = 100
     title = models.CharField(
         max_length=HOMEWORK_MAX_LENGTH,
@@ -198,28 +172,43 @@ class StudentHomework(DateTimeCustom):
         upload_to='homeworks/logos/%Y/%m/%d',
         verbose_name='Лого'
     )
-    student = models.ForeignKey(
-        Student,
-        on_delete=models.PROTECT
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.PROTECT,
+        verbose_name='Получатель'
+    )
+    is_checked = models.BooleanField(
+        default=False,
+        verbose_name='Проверена работа'
+    )
+    is_passed = models.BooleanField(
+        default=False,
+        verbose_name='Сдана работа'
     )
     objects = StudentHomeworkQuerySet().as_manager()
 
-    class Meta:
+    class Meta:  # noqa
         verbose_name = 'Домашка студентов'
         verbose_name_plural = 'Домашки студентов'
         ordering = ('title',)
 
-    def __str__(self) -> str:
-        return f'Домашка: {self.title}, выполнено: {self.student}'
+    def __str__(self) -> str:  # noqa
+        return f'Домашка: {self.title}, выполнено: {self.user}'
 
-    def delete(self) -> None:
+    def delete(self) -> None:  # noqa
         self.datetime_deleted = datetime.now()
         self.save(
             update_fields=['datetime_deleted']
         )
 
 
-class File(DateTimeCustom):
+class FileQuerySet(QuerySet):  # noqa
+
+    def get_checked_homeworks(self) -> QuerySet:  # noqa
+        return self.filter(homework__is_checked=True)
+
+
+class File(DateTimeCustom):  # noqa
     FILE_MAX_LENGHT_NAME = 100
     title = models.CharField(
         max_length=FILE_MAX_LENGHT_NAME,
@@ -231,19 +220,19 @@ class File(DateTimeCustom):
     )
     homework = models.ForeignKey(
         StudentHomework,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name='Домашка'
     )
 
-    class Meta:
+    class Meta:  # noqa
         verbose_name_plural = 'Файлы'
         verbose_name = 'Файл'
         ordering = ('title',)
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa
         return f'Файл: {self.title} по предмету: {self.homework}'
 
-    def delete(self) -> None:
+    def delete(self) -> None:  # noqa
         self.datetime_deleted = datetime.now()
         self.save(
             update_fields=['datetime_deleted']

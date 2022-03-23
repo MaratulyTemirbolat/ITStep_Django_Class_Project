@@ -8,13 +8,13 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
-class CustomUserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):  # noqa
 
     def create_user(
         self,
         email: str,
         password: str
-    ) -> 'CustomUser':
+    ) -> 'CustomUser':  # noqa
         if not email:
             raise ValidationError('Email required')
 
@@ -36,7 +36,7 @@ class CustomUserManager(BaseUserManager):
         self,
         email: str,
         password: str
-    ) -> 'CustomUser':
+    ) -> 'CustomUser':  # noqa
         user: 'CustomUser' = self.model(
             email=self.normalize_email(email),
             password=password
@@ -48,7 +48,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):  # noqa
     email = models.EmailField('Почта/Логин', unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -63,17 +63,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    class Meta:
+    class Meta:  # noqa
         verbose_name_plural = 'Кастомные пользователи'
         verbose_name = 'Кастомный пользователь'
         ordering = (
             'datetime_joined',
         )
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa
         return f'Кастомный пользователь: {self.email}'
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs) -> None:  # noqa
         if self.email != self.email.lower():
             raise ValidationError(
                 'Ваш email "%(email)s" должен быть в нижнем регистре',

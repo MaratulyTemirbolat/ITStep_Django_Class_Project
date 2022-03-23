@@ -27,11 +27,7 @@ class CustomUserRegisterForm(UserCreationForm):  # noqa
 
 
 class CustomerUserLoginForm(AuthenticationForm):  # noqa
-    username = forms.EmailField(label='Email/username',
-                                widget=forms.TextInput(
-                                    attrs={'class': 'form-control'}
-                                ))
-    password = forms.CharField(label='Password',
-                               widget=forms.PasswordInput(
-                                    attrs={'class': 'form-control'}
-                                ))
+    username = forms.EmailField()
+    password = forms.CharField(
+        widget=forms.PasswordInput()
+    )

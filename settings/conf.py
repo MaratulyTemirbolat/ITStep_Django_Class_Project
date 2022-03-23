@@ -36,6 +36,8 @@ SHELL_PLUS_MODEL_ALIASES = {
         'Account': 'A',
         'Group': 'G',
         'Professor': 'P',
+        'StudentHomework': 'H',
+        'File': 'FF'
     },
 }
 SHELL_PLUS = 'ipython'

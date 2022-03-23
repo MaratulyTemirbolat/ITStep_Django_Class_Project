@@ -42,39 +42,43 @@ from my_new_app.models import (
 #         return self.readonly_fields
 
 
-class StudentAdmin(admin.ModelAdmin):
+class StudentAdmin(admin.ModelAdmin):  # noqa
     MAX_STUDENT_EDITABLE_AGE = 16
     readonly_fields: tuple = (
         'datetime_created',
         'datetime_updated',
         'datetime_deleted',
-        )
-    list_filter = (
+    )
+    list_filter: tuple = (
         'age',
         'gpa',
     )
-    list_display = (
+    list_display: tuple = (
         'full_name',
         'age',
         'gpa',
     )
 
     def student_edit_age_validator(self,
-                                   obj: Optional[Student]) -> bool:
+                                   obj: Optional[Student]) -> bool:  # noqa
         validator_result: bool = (obj and
                                   obj.age > self.MAX_STUDENT_EDITABLE_AGE)
         return validator_result
-    
+
     def get_readonly_fields(self,
                             request: HttpRequest,
-                            obj: Optional[Student]) -> tuple:
+                            obj: Optional[Student]) -> tuple:  # noqa
         if(self.student_edit_age_validator(obj)):
             return self.readonly_fields + ('age',)
         return self.readonly_fields
 
 
-class GroupAdmin(admin.ModelAdmin):
-    readonly_fields = ('datetime_deleted',)
+class GroupAdmin(admin.ModelAdmin):  # noqa
+    readonly_fields: tuple = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
 
 
 class ProfessorAdmin(admin.ModelAdmin):
@@ -92,9 +96,9 @@ class StudentHomeworkAdmin(admin.ModelAdmin):
         'datetime_deleted',
     )
     list_filter = ('datetime_deleted',)
-    list_display = ('title', 'subject', 'get_logo', 'student')
+    list_display = ('title', 'subject', 'get_logo', 'user')
 
-    def get_logo(self, obj: StudentHomework):
+    def get_logo(self, obj: StudentHomework) -> str:
         if obj.logo:
             return mark_safe(f'<img src="{obj.logo.url}" width="150">')
         return "-"
@@ -104,7 +108,7 @@ class StudentHomeworkAdmin(admin.ModelAdmin):
                             obj: Optional[StudentHomework] = None) -> tuple:
         if obj:
             return self.readonly_fields + ('title', 'subject',
-                                           'logo', 'student'
+                                           'logo', 'user'
                                            )
         return self.readonly_fields
 
