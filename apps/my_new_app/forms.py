@@ -5,6 +5,9 @@ from django.contrib.auth.forms import (
 )
 
 from auths.models import CustomUser
+from my_new_app.models import (
+    StudentHomework,
+)
 
 
 class CustomUserRegisterForm(UserCreationForm):  # noqa
@@ -31,3 +34,13 @@ class CustomerUserLoginForm(AuthenticationForm):  # noqa
     password = forms.CharField(
         widget=forms.PasswordInput()
     )
+
+
+class CreateHWForm(forms.ModelForm):  # noqa
+
+    class Meta:  # noqa
+        model = StudentHomework
+        fields: tuple = (
+            'title', 'subject',
+            'logo'
+        )

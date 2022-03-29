@@ -35,11 +35,11 @@ class StudentQuerySet(QuerySet):
 
     ADULT_AGE = 18  # the minimum age of any adult
 
-    def get_adult_students(self) -> QuerySet:
+    def get_adult_students(self) -> QuerySet:  # noqa
         return self.filter(age__gte=self.ADULT_AGE)
 
 
-class Student(DateTimeCustom):
+class Student(DateTimeCustom):  # noqa
     MAX_REGISTER_AGE = 30
     FULL_NAME_MAX_LENGTH = 150
     account = models.OneToOneField(
@@ -64,14 +64,14 @@ class Student(DateTimeCustom):
     )
     objects = StudentQuerySet().as_manager()
 
-    class Meta:
+    class Meta:  # noqa
         ordering = (
             'gpa',
         )
         verbose_name = 'Студент'
         verbose_name_plural = 'Студенты'
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa
         return 'Student: {0}, Age: {1},Group: {2}, GPA: {3}'.format(
             self.full_name,
             self.age,
@@ -79,7 +79,7 @@ class Student(DateTimeCustom):
             self.gpa
         )
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs) -> None:  # noqa
         if(self.age > self.MAX_REGISTER_AGE):
             raise ValidationError(
                 'Ваш возраст должен быть не более %(max_age)s лет',
@@ -88,7 +88,7 @@ class Student(DateTimeCustom):
                                   )
         super().save(*args, **kwargs)
 
-    def delete(self) -> None:
+    def delete(self) -> None:  # noqa
         datetime_now: datetime = datetime.now()
         self.datetime_deleted = datetime_now
 
@@ -182,7 +182,7 @@ class StudentHomework(DateTimeCustom):  # noqa
         verbose_name='Проверена работа'
     )
     is_passed = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name='Сдана работа'
     )
     objects = StudentHomeworkQuerySet().as_manager()

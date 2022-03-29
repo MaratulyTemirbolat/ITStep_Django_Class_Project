@@ -27,7 +27,7 @@ class CustomUserChangeForm(UserChangeForm):  # noqa
 class CustomUserForm(forms.ModelForm):  # noqa
     email = forms.EmailField()
     password = forms.CharField(
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput()
     )
 
     class Meta:  # noqa
