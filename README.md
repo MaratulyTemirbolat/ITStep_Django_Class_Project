@@ -1,1 +1,1 @@
-# Temirbolat Maratuly 
+# Temirbolat Maratuly ITStep Django class project
