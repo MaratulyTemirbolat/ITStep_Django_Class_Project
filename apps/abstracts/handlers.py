@@ -10,7 +10,7 @@ from abstracts.mixins import HttpResponseMixin
 class ViewHandler(HttpResponseMixin):
     """Handler for validating request and generating response."""
 
-    template_login_page: str = 'my_new_app/login.html'
+    template_login_page: str = 'my_new_app/user_login.html'
 
     def get_validated_response(
         self,

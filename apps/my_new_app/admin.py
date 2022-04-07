@@ -81,7 +81,7 @@ class GroupAdmin(admin.ModelAdmin):  # noqa
     )
 
 
-class ProfessorAdmin(admin.ModelAdmin):
+class ProfessorAdmin(admin.ModelAdmin):  # noqa
     readonly_fields: tuple = (
         'datetime_created',
         'datetime_updated',
@@ -89,8 +89,8 @@ class ProfessorAdmin(admin.ModelAdmin):
         )
 
 
-class StudentHomeworkAdmin(admin.ModelAdmin):
-    readonly_fields = (
+class StudentHomeworkAdmin(admin.ModelAdmin):  # noqa
+    readonly_fields: tuple = (
         'datetime_created',
         'datetime_updated',
         'datetime_deleted',
@@ -98,14 +98,14 @@ class StudentHomeworkAdmin(admin.ModelAdmin):
     list_filter = ('datetime_deleted',)
     list_display = ('title', 'subject', 'get_logo', 'user')
 
-    def get_logo(self, obj: StudentHomework) -> str:
+    def get_logo(self, obj: StudentHomework) -> str:  # noqa
         if obj.logo:
             return mark_safe(f'<img src="{obj.logo.url}" width="150">')
         return "-"
     get_logo.short_description = 'Логотип'
 
     def get_readonly_fields(self, request: HttpRequest,
-                            obj: Optional[StudentHomework] = None) -> tuple:
+                            obj: Optional[StudentHomework] = None) -> tuple:  # noqa
         if obj:
             return self.readonly_fields + ('title', 'subject',
                                            'logo', 'user'
@@ -113,11 +113,15 @@ class StudentHomeworkAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
-class FileAdmin(admin.ModelAdmin):
-    readonly_fields = ()
+class FileAdmin(admin.ModelAdmin):  # noqa
+    readonly_fields: tuple = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
 
     def get_readonly_fields(self, request: HttpRequest,
-                            obj: Optional[File] = None) -> tuple:
+                            obj: Optional[File] = None) -> tuple:  # noqa
         if obj:
             return self.readonly_fields + ('title', 'file', 'homework')
         return self.readonly_fields

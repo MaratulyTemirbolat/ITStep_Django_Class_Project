@@ -4,31 +4,93 @@ from django.urls import (
 )
 
 from my_new_app.views import (
-    # index,
-    # show,
-    # user_register,
-    # user_login,
-    # user_logout,
-    # view_passed_homeworks,
     IndexView,
     ShowView,
+
     UserRegisterView,
     UserLoginView,
     UserLogoutView,
-    PassedHomeworksView,
+
     CreateHomeworkView,
+    DetailHomeworkView,
+    DeleteHWView,
+
+    PageHomeworkFilesView,
+    HomeworkFilesCreateView,
+    HomeworkFilesCheckView,
+    HomeworkFilesDeleteView,
 )
 
 
 urlpatterns = [
-    path('', IndexView.as_view(), name="page_main"),
+    path(
+        '',
+        IndexView.as_view(),
+        name="page_main"
+    ),
     # re_path(r'^show/(?P<username>\w+)/$', show, name="page_show"),
-    path('show/<int:user_id>/', ShowView.as_view(), name="user_info"),
-    path('register/', UserRegisterView.as_view(), name='register'),
-    path('login/', UserLoginView.as_view(), name='login'),
-    path('logout/', UserLogoutView.as_view(), name='logout'),
-    path('passed_homeworks/', PassedHomeworksView.as_view(),
-         name='passed_homeworks'),
-    path('create_homework/', CreateHomeworkView.as_view(),
-         name='create_hw'),
+    path(
+        'show/<int:homework_id>/',
+        ShowView.as_view(),
+        name="user_info"
+    ),
+    # ------------------------------------------------------|
+    # Auths
+    #
+    path(
+        'register/',
+        UserRegisterView.as_view(),
+        name='register'
+    ),
+    path(
+        'login/',
+        UserLoginView.as_view(),
+        name='login'
+    ),
+    path(
+        'logout/',
+        UserLogoutView.as_view(),
+        name='logout'
+    ),
+    # ------------------------------------------------------|
+    # Homework
+    #
+    path(
+        'create_homework/',
+        CreateHomeworkView.as_view(),
+        name='create_hw'
+    ),
+    path(
+        'detail_homework/<int:homework_id>/',
+        DetailHomeworkView.as_view(),
+        name="page_homework_detail"
+    ),
+    path(
+        "delete_hw/<int:homework_id>/",
+        DeleteHWView.as_view(),
+        name="page_homework_delete"
+    ),
+    # ------------------------------------------------------|
+    # Files
+    #
+    path(
+        'view_hw_files/<str:filter_by>/',
+        PageHomeworkFilesView.as_view(),
+        name="page_homework_files"
+    ),
+    path(
+        "hw_files/<int:homework_id>/",
+        HomeworkFilesCreateView.as_view(),
+        name="page_homework_file_create"
+    ),
+    path(
+        'homework_files_checked/<int:file_id>/',
+        HomeworkFilesCheckView.as_view(),
+        name='page_homework_files_check'
+    ),
+    path(
+        'homework_files_delete/<int:file_id>/',
+        HomeworkFilesDeleteView.as_view(),
+        name='page_homework_files_delete'
+    ),
 ]

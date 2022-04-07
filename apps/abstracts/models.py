@@ -1,13 +1,13 @@
 from django.db import models
 
 
-class DateTimeCustom(models.Model):
+class DateTimeCustom(models.Model):  # noqa
     datetime_created = models.DateTimeField(
-        verbose_name = "Время создания",
+        verbose_name="Время создания",
         auto_now_add=True
     )
     datetime_updated = models.DateTimeField(
-        verbose_name = "Время обновления",
+        verbose_name="Время обновления",
         auto_now=True
     )
     datetime_deleted = models.DateTimeField(
@@ -15,6 +15,6 @@ class DateTimeCustom(models.Model):
         null=True,
         blank=True
     )
-    
-    class Meta:
+
+    class Meta:  # noqa
         abstract = True

@@ -1,6 +1,6 @@
-{% extends 'my_new_app/visitor.html' %}
-{% block title %}Логин{% endblock %}
-{% block login_active %}active{% endblock %}
+{% extends 'my_new_app/base_visitor.html' %}
+{% block ctx_title %}Регистрация{% endblock %}
+{% block register_active %}active{% endblock %}
 
 {% block body %}
 
@@ -9,24 +9,28 @@
         <div class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3>Логин</h3>
+
+                    <h3>Регистрация аккаунта</h3>
+
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
-                    <form method="post" enctype="multipart/form-data">
+
+                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
 
                         {% csrf_token %}
-                        {{ form.as_p }}
+
+                        {% include 'university/form_template.html' %}
 
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-success">Create homework</button>
+                                <button type="submit" class="btn btn-success">Регистрация</button>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="panel-footer">
-                    Don't have an account? <a href="{% url 'register' %}">Click here</a> to register.
+                    Уже есть аккаунт? <a href="{% url 'login' %}">Нажмите</a> чтобы залогиниться.
                 </div>
             </div>
         </div>
