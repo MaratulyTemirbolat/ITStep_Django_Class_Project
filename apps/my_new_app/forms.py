@@ -7,6 +7,7 @@ from django.contrib.auth.forms import (
 from auths.models import CustomUser
 from my_new_app.models import (
     StudentHomework,
+    File,
 )
 
 
@@ -43,4 +44,14 @@ class CreateHWForm(forms.ModelForm):  # noqa
         fields: tuple = (
             'title', 'subject',
             'logo'
+        )
+
+
+class FileForm(forms.ModelForm):  # noqa
+
+    class Meta:  # noqa
+        model = File
+        fields: tuple = (
+            'title', 'file',
+            'is_checked',
         )

@@ -140,15 +140,15 @@ class Professor(DateTimeCustom):  # noqa
     )
     students = models.ManyToManyField('Student')
 
-    class Meta:
+    class Meta:  # noqa
         verbose_name = 'Преподаватель'
         verbose_name_plural = 'Преподаватели'
         ordering = ('full_name',)
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs) -> None:  # noqa
         super().save(*args, **kwargs)
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa
         return f'Teacher: {self.full_name}, teaches: {self.topic}'
 
 
@@ -159,6 +159,9 @@ class StudentHomeworkQuerySet(QuerySet):  # noqa
 
 
 class StudentHomework(DateTimeCustom):  # noqa
+    IMAGE_TYPES = (
+        'jpeg', 'png', 'img',
+    )
     HOMEWORK_MAX_LENGTH = 100
     title = models.CharField(
         max_length=HOMEWORK_MAX_LENGTH,
@@ -176,10 +179,6 @@ class StudentHomework(DateTimeCustom):  # noqa
         CustomUser,
         on_delete=models.PROTECT,
         verbose_name='Получатель'
-    )
-    is_checked = models.BooleanField(
-        default=False,
-        verbose_name='Проверена работа'
     )
     is_passed = models.BooleanField(
         default=True,
@@ -201,14 +200,30 @@ class StudentHomework(DateTimeCustom):  # noqa
             update_fields=['datetime_deleted']
         )
 
+    @property
+    def is_checked(self) -> bool:  # noqa
+        return all(
+            self.files.values_list(
+                'is_checked', flat=True
+            )
+        )
+
 
 class FileQuerySet(QuerySet):  # noqa
 
     def get_checked_homeworks(self) -> QuerySet:  # noqa
         return self.filter(homework__is_checked=True)
 
+    def get_non_deleted(self) -> QuerySet:  # noqa
+        return self.filter(
+            datetime_deleted__isnull=True
+        )
+
 
 class File(DateTimeCustom):  # noqa
+    FILE_TYPES = (
+        'txt', 'pdf', 'docs',
+    )
     FILE_MAX_LENGHT_NAME = 100
     title = models.CharField(
         max_length=FILE_MAX_LENGHT_NAME,
@@ -221,8 +236,14 @@ class File(DateTimeCustom):  # noqa
     homework = models.ForeignKey(
         StudentHomework,
         on_delete=models.PROTECT,
+        related_name='files',
         verbose_name='Домашка'
     )
+    is_checked = models.BooleanField(
+        default=False,
+        verbose_name='Проверена работа'
+    )
+    objects = FileQuerySet().as_manager()
 
     class Meta:  # noqa
         verbose_name_plural = 'Файлы'
